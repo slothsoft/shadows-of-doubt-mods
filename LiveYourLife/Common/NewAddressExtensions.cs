@@ -8,7 +8,12 @@ public static class NewAddressExtensions
 {
     public static IEnumerable<NewAddress> WhereIsResidential(this IEnumerable<NewAddress> addresses)
     {
-        return addresses.Where(a => a.inhabitants.Count > 0);
+        return addresses.Where(a => a.residence is not null);
+    }
+    
+    public static IEnumerable<NewAddress> WhereIsComercial(this IEnumerable<NewAddress> addresses)
+    {
+        return addresses.Where(a => a.company is not null);
     }
     
     public static float CalculateFamilyIncome(this NewAddress address)

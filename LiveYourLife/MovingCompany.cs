@@ -11,23 +11,15 @@ public class MovingCompany
 
     public void MoveTenantsIfApplicable()
     {
-        foreach (var address in GameplayController.Instance.forSale)
+        foreach (var address in GameplayController.Instance.forSale.ToArray())
         {
             var newTenants = FindNewTenants(address);
             if (newTenants != null)
             {
                 MoveTenants(newTenants, address);
-                break; 
             }
         }
     }
-
-    // works nicely:
-    // Logger.LogInfo($"{Name} tick");
-    // foreach (var address in GameplayController.Instance.forSale)
-    // {
-    //    Logger.LogInfo($"{address.name}: {address.GetPrice()}");
-    // }
         
     public NewAddress? FindNewTenants(NewAddress targetAddress)
     {
@@ -43,7 +35,7 @@ public class MovingCompany
             // only take addresses into account where people live
             .WhereIsResidential()
             .ToArray();
-        Log($"    addresses on same floor: {addressesOnSameFloor}");
+        Log($"    addresses on same floor: {addressesOnSameFloor.Length}");
 
         var familyIncomesOnSameFloor = addressesOnSameFloor
             // calculate family income
@@ -64,6 +56,7 @@ public class MovingCompany
                 var familiyIncome = a.CalculateFamilyIncome();
                 return familiyIncome >= minFamilyIncome && familiyIncome <= maxFamilyIncome;
             })
+            .WhereIsResidential()
             // Port Brewery: around 300 to 400 families can move
             // return only the ones that don't live on the same floor already
             .Where(f => f.floor.floor != addressFloor)
@@ -72,12 +65,36 @@ public class MovingCompany
 
     private void MoveTenants(NewAddress newTenants, NewAddress targetAddress)
     {
+        LogNewAddressComparison(newTenants, targetAddress);
+        
         Log($"    family moves from: {newTenants.name}");
         MoveTenantsInto(newTenants, targetAddress);
         MoveTenantsOut(newTenants);
         
         newTenants.saleNote = targetAddress.saleNote;
         targetAddress.saleNote = null;
+        
+        LogNewAddressComparison(newTenants, targetAddress);
+    }
+
+    private void LogNewAddressComparison(NewAddress valueA, NewAddress valueB)
+    {
+        Log($"id\t\t{valueA.id}\t\t{valueB.id}");
+        Log($"generatedRoomConfigs\t\t{valueA.generatedRoomConfigs}\t\t{valueB.generatedRoomConfigs}");
+        Log($"editorID\t\t{valueA.editorID}\t\t{valueB.editorID}");
+        Log($"isOutsideAddress\t\t{valueA.isOutsideAddress}\t\t{valueB.isOutsideAddress}");
+        Log($"isLobbyAddress\t\t{valueA.isLobbyAddress}\t\t{valueB.isLobbyAddress}");
+        Log($"normalizedLandValue\t\t{valueA.normalizedLandValue}\t\t{valueB.normalizedLandValue}");
+        Log($"hiddenSpareKey\t\t{valueA.hiddenSpareKey}\t\t{valueB.hiddenSpareKey}");
+        Log($"owners\t\t{valueA.owners.Count}\t\t{valueB.owners.Count}");
+        Log($"inhabitants\t\t{valueA.inhabitants.Count}\t\t{valueB.inhabitants.Count}");
+        Log($"favouredCustomers\t\t{valueA.favouredCustomers.Count}\t\t{valueB.favouredCustomers.Count}");
+        Log($"addressPreset\t\t{valueA.addressPreset}\t\t{valueB.addressPreset}");
+        Log($"residence\t\t{valueA.residence}\t\t{valueB.residence}");
+        Log($"interiorLightsEnabled\t\t{valueA.interiorLightsEnabled}\t\t{valueB.interiorLightsEnabled}");
+        Log($"saleNote\t\t{valueA.saleNote}\t\t{valueB.saleNote}");
+        Log($"alarmActive\t\t{valueA.alarmActive}\t\t{valueB.alarmActive}");
+        Log($"passcode\t\t{valueA.passcode.id}\t\t{valueB.passcode.id}");
     }
 
     private void MoveTenantsInto(NewAddress newTenants, NewAddress targetAddress)
@@ -85,14 +102,16 @@ public class MovingCompany
         Log("    move inhabitants");
         foreach (var inhabitant in newTenants.inhabitants)
         {
-            targetAddress.inhabitants.Add(inhabitant);
+            targetAddress.AddInhabitant(inhabitant);
+            inhabitant.home = targetAddress;
             Log($"        + {inhabitant.firstName} {inhabitant.surName}");
         }
 
         Log("    move owners");
         foreach (var owner in newTenants.owners)
         {
-            targetAddress.owners.Add(owner);
+            targetAddress.AddOwner(owner);
+            owner.residence = targetAddress.residence;
             Log($"        + {owner.firstName} {owner.surName}");
         }
         
@@ -102,20 +121,29 @@ public class MovingCompany
             addressRoom.RemoveAllInhabitantFurniture(false, FurnitureClusterLocation.RemoveInteractablesOption.remove);
             GenerationController.Instance.FurnishRoom(addressRoom);
             Log($"        + furnish {addressRoom.name} with {addressRoom.furniture.Count} furnitures");
-            addressRoom.LoadRoomStuff(addressRoom.geometryLoaded);
+        }
+        GenerationController.Instance.GenerateAddressDecor(targetAddress);
+        foreach (var addressRoom in targetAddress.rooms)
+        {
             addressRoom.SetVisible(true, true, addressRoom.geometryLoaded);
         }
-
         GameplayController.Instance.forSale.Remove(targetAddress);
     }
 
     private void MoveTenantsOut(NewAddress oldAddress)
     {
-        oldAddress.inhabitants.Clear();
-        oldAddress.owners.Clear();
+        foreach (var owner in oldAddress.owners.ToArray())
+        {
+            oldAddress.RemoveOwner(owner);
+        }
+        foreach (var inhabitant in oldAddress.inhabitants.ToArray())
+        {
+            oldAddress.RemoveInhabitant(inhabitant);
+        }
         foreach (var addressRoom in oldAddress.rooms)
         {
-            addressRoom.RemoveAllInhabitantFurniture(false, FurnitureClusterLocation.RemoveInteractablesOption.remove);
+            addressRoom.RemoveAllInhabitantFurniture(true, FurnitureClusterLocation.RemoveInteractablesOption.remove);
+            addressRoom.SetVisible(true, true, addressRoom.geometryLoaded);
         }
         GameplayController.Instance.forSale.Add(oldAddress);
     }

@@ -1,4 +1,12 @@
-﻿
+﻿# Shadows of Doubt Mods
+
+## To-Do
+
+- [ ] spawn decor for new address
+- [ ] add correct "for sale" for old address
+- [ ] only move after a while
+
+
 
 Classes that might be useful:
 - `CityBuildings.Instance`
