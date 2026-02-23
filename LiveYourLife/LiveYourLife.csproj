@@ -24,7 +24,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="BepInEx.Unity.IL2CPP" Version="6.0.0-be.*" IncludeAssets="compile" />
+        <PackageReference Include="BepInEx.Unity.IL2CPP" Version="6.0.0-be.*" IncludeAssets="compile"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -38,8 +38,8 @@
     <Target Name="CopyToModFolder" AfterTargets="AfterBuild">
         <Copy SourceFiles="$(OutDir)$(AssemblyName).dll" DestinationFolder="$(BepInExFolder)plugins\slothsoft\"/>
     </Target>
-    
+
     <Target Name="RemoveFromModFolder" AfterTargets="Clean">
-        <Delete Files="$(BepInExFolder)plugins\slothsoft\$(AssemblyName).dll" />
+        <Delete Files="$(BepInExFolder)plugins\slothsoft\$(AssemblyName).dll"/>
     </Target>
 </Project>
