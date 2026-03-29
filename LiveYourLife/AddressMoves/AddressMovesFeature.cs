@@ -16,16 +16,16 @@ public static class AddressMovesFeature
             {
                 Log = Logger.LogInfo,
             }.Sync(AddressMovesSaveData.Instance);
-        Lib.Time.OnMinuteChanged += MoveTenantsIfApplicable;
+        Lib.Time.OnHourChanged += MoveTenantsIfApplicable;
     }
 
-    private static void MoveTenantsIfApplicable(object sender, TimeChangedArgs e)
+    private static void MoveTenantsIfApplicable(object? sender, TimeChangedArgs e)
     {
         Logger.LogInfo($"{LiveYourLifePlugin.Name} tick on {Lib.Time.CurrentDateTime.ToString(LiveYourLifePlugin.DateFormat)}");
-        var company = new MovingCompany(LiveYourLifeConfig.Instance.AddressMoves, AddressMovesSaveData.Instance)
+        var movers = new MovingCompany(LiveYourLifeConfig.Instance.AddressMoves, AddressMovesSaveData.Instance)
         {
             Log = Logger.LogInfo
         };
-        company.MoveTenantsIfApplicable();
+        movers.MoveTenantsIfApplicable();
     }
 }

@@ -18,6 +18,7 @@ public class MovingCompany(AddressMovesConfig config, AddressMovesSaveData saveD
             if (newTenants != null)
             {
                 MoveTenants(newTenants, address);
+                break;
             }
         }
     }
@@ -127,16 +128,19 @@ public class MovingCompany(AddressMovesConfig config, AddressMovesSaveData saveD
         foreach (var addressRoom in targetAddress.rooms)
         {
             addressRoom.RemoveAllInhabitantFurniture(false, FurnitureClusterLocation.RemoveInteractablesOption.remove);
-            generationController.FurnishRoom(addressRoom);
-            Log($"        + furnish {addressRoom.name} with {addressRoom.furniture.Count} furnitures");
         }
         generationController.GenerateAddressDecor(targetAddress);
+        foreach (var addressRoom in targetAddress.rooms)
+        {
+            Log($"        + furnish {addressRoom.name} with {addressRoom.furniture.Count} furnitures");
+        }
             
         foreach (var addressRoom in targetAddress.rooms)
         {
             addressRoom.SetVisible(true, true, addressRoom.geometryLoaded);
             addressRoom.LoadRoomStuff(addressRoom.geometryLoaded);
         }
+        targetAddress.PlaceObjects(); // this places the deco articles
     }
 
     private void MoveTenantsOut(NewAddress oldAddress)

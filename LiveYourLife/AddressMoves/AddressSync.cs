@@ -33,7 +33,7 @@ internal class AddressSync(bool initital)
     
     private void RemoveOrphansFromSaveData(IDictionary<int, NewAddress> addressesForSale, AddressMovesSaveData saveData)
     {
-        foreach (var addressSaleSaveData in saveData.AddressSales.Where(a => !addressesForSale.ContainsKey(a.AddressId)))
+        foreach (var addressSaleSaveData in saveData.AddressSales.Where(a => !addressesForSale.ContainsKey(a.AddressId)).ToArray())
         {
             saveData.AddressSales.Remove(addressSaleSaveData);
         }
