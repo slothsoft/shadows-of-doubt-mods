@@ -8,6 +8,8 @@ Mods for the game [Shadows of Doubt](https://store.steampowered.com/agecheck/app
   * [How to Develop for SoD](#how-to-develop-for-sod)
     * [Useful Classes](#useful-classes)
     * [Useful Methods](#useful-methods)
+    * [Useful Code Snippets](#useful-code-snippets)
+      * [Find citizens who don't live with their partner](#find-citizens-who-dont-live-with-their-partner)
 <!-- TOC -->
 
 ## Mods
@@ -37,3 +39,20 @@ Mods for the game [Shadows of Doubt](https://store.steampowered.com/agecheck/app
     - `RemoveAllInhabitantFurniture()`
     - `RemoveOccupant()`
 
+
+### Useful Code Snippets
+
+#### Find citizens who don't live with their partner
+
+```c#    
+Log("Finding citizens who don't live with their partner");
+foreach (var citizen in CityData.Instance.citizenDirectory.Where(c => c != null && c.partner != null && c.residence != null))
+{
+    var citizenAddress = citizen.residence?.address;
+    var partnerAddress = citizen.partner?.residence?.address;
+    if (citizenAddress != null && partnerAddress != citizenAddress)
+    {
+        Log($"- {citizen.firstName} {citizen.surName} and {citizen.partner?.firstName} {citizen.partner?.surName} do not live together ({citizenAddress.name ?? "homeless"} vs. {partnerAddress?.name ?? "homeless"})");
+    }
+ }
+```

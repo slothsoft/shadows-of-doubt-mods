@@ -21,4 +21,12 @@ public static class EnumerableExtensions
         if (collection.Length == 0) return defaultValue;
         return collection[Random.Next(collection.Length)];
     }
+    
+    public static void RemoveRange<TElement>(this ICollection<TElement> enumerable, IEnumerable<TElement> toRemoves)
+    {
+        foreach (var toRemove in toRemoves)
+        {
+            enumerable.Remove(toRemove);
+        }
+    }
 }

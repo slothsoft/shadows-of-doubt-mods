@@ -15,4 +15,4 @@ public record AddressMovesSaveData
     public Time.TimeData? LastMove { get; set; }
 }
 
-public record AddressSaleSaveData(int AddressId, Time.TimeData Since);
+public record AddressSaleSaveData(string AddressName, Time.TimeData Since);

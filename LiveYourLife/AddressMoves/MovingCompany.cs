@@ -22,7 +22,7 @@ public class MovingCompany(AddressMovesConfig config, AddressMovesSaveData saveD
             }
         }
     }
-
+    
     public NewAddress? FindNewTenants(NewAddress targetAddress)
     {
         // CityData.Instance.addressDirectory
@@ -152,6 +152,7 @@ public class MovingCompany(AddressMovesConfig config, AddressMovesSaveData saveD
         }
 
         GameplayController.Instance.forSale.Add(oldAddress);
+        oldAddress.GetOnSaleSince(saveData);
     }
     
     private void CloseSale(NewAddress newTenants, NewAddress targetAddress)
@@ -159,7 +160,7 @@ public class MovingCompany(AddressMovesConfig config, AddressMovesSaveData saveD
         newTenants.saleNote = targetAddress.saleNote;
         targetAddress.saleNote = null;
         
-        newTenants.saleNote.forSale = newTenants;
+        newTenants.saleNote?.forSale = newTenants;
         saveData.LastMove = Lib.Time.CurrentDateTime;
     }
 }

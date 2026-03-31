@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using SOD.Common;
+using SOD.Common.Extensions;
 using SOD.Common.Helpers;
 
 namespace LiveYourLife.AddressMoves;
@@ -14,6 +15,7 @@ internal static class AddressMovesExtensions
         {
             // this is the easiest case: the last move was too recent
             AddressMovesFeature.Logger.LogInfo($"-> the last move was too recent (wait until {saveData.LastMove.Value.AddHours(config.TimeBetweenMovesInHours).ToString(LiveYourLifePlugin.DateFormat)})");
+            addresses.ForEach(a => a.GetOnSaleSince(saveData));
             return []; 
         }
         return addresses.Where(a => a.IsReadyForNewTenants(config, saveData));
@@ -32,25 +34,30 @@ internal static class AddressMovesExtensions
         return shouldBeOnSaleAfter < Lib.Time.CurrentDateTime;
     }
 
-    private static Time.TimeData GetOnSaleSince(this NewAddress newAddress, AddressMovesSaveData saveData)
+    internal static Time.TimeData GetOnSaleSince(this NewAddress newAddress, AddressMovesSaveData saveData)
     {
-        var addressSale = saveData.AddressSales.SingleOrDefault(a => a.AddressId == newAddress.id);
+        var addressSale = saveData.AddressSales.SingleOrDefault(a => a.AddressName == newAddress.name);
         if (addressSale == null)
         {
             // this address must be new (?)
-            addressSale = saveData.AddInitialData(newAddress.id);
+            addressSale = saveData.AddInitialData(newAddress.name);
             LiveYourLifePlugin.Logger.LogInfo($"{newAddress.name} is empty since {addressSale.Since.ToString(LiveYourLifePlugin.DateFormat)}");
         }
 
         return addressSale.Since;
     }
     
-    internal static AddressSaleSaveData AddInitialData(this AddressMovesSaveData saveData, int id, bool initial = false)
+    private static AddressSaleSaveData AddInitialData(this AddressMovesSaveData saveData, string name, bool initial = false)
     {
-        // if its initial, then this plugin is new and the address is empty since the start of the game (Feb 1st 1979)
-        var addressOnSaleSince = initial ? new Time.TimeData(1979, 2, 1, 0, 0) : Lib.Time.CurrentDateTime;
-        var addressSale = new AddressSaleSaveData(id, addressOnSaleSince);
+        var addressSale = name.CreateInitialData(initial);
         saveData.AddressSales.Add(addressSale);
         return addressSale;
+    }
+    
+    internal static AddressSaleSaveData CreateInitialData(this string addressName, bool initial = false)
+    {
+        // if its initial, then this plugin is new and the address is empty since the start of the game (Feb 1st 1979)
+        var addressOnSaleSince = initial ? new Time.TimeData(1979, 2, 0, 0, 0) : Lib.Time.CurrentDateTime;
+        return new AddressSaleSaveData(addressName, addressOnSaleSince);
     }
 }

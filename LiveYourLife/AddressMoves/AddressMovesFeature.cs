@@ -12,10 +12,14 @@ public static class AddressMovesFeature
     {
         Lib.SaveGame.OnAfterLoad += (_, e)
             // saved LiveYourLifeConfig data is loaded OnBeforeLoad, so if addresses have no timestamp here, the plug-in is new
-            => new AddressSync(true)
+            => {
+            var saveData = AddressMovesSaveData.Instance;
+            LiveYourLifePlugin.Logger.LogInfo($"{saveData.AddressSales.Count} addresses loaded");
+            new AddressSync(true)
             {
                 Log = Logger.LogInfo,
-            }.Sync(AddressMovesSaveData.Instance);
+            }.Sync(saveData);
+        };
         Lib.Time.OnHourChanged += MoveTenantsIfApplicable;
     }
 
