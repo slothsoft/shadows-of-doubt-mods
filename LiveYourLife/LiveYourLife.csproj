@@ -8,7 +8,7 @@
         <AssemblyName>LiveYourLife</AssemblyName>
         <Product>$(AssemblyName)</Product>
         <RootNamespace>$(AssemblyName)</RootNamespace>
-        <Version>1.0.0</Version>
+        <Version>0.0.9</Version>
 
         <RestoreAdditionalProjectSources>
             https://api.nuget.org/v3/index.json;
@@ -20,7 +20,13 @@
     </PropertyGroup>
 
     <PropertyGroup>
+        <!-- Change these variables -->
+        <ModFolder>$(APPDATA)\..\LocalLow\ColePowered Games\Shadows of Doubt\Mods</ModFolder>
         <BepInExFolder>$(APPDATA)\r2modmanPlus-local\ShadowsofDoubt\profiles\Default\BepInEx\</BepInExFolder>
+        
+        <!-- Calculated from the above-->
+        <!--<ThisModsFolder>$(ModFolder)\Slothsoft-$(AssemblyName)</ThisModsFolder>-->
+        <ThisModsFolder>$(BepInExFolder)\plugins\Slothsoft-$(AssemblyName)</ThisModsFolder>
     </PropertyGroup>
 
     <ItemGroup>
@@ -29,20 +35,26 @@
 
     <ItemGroup>
         <!-- Assembly DLL with the source code; how to get it: https://shadowsofdoubt.notion.site/Accessing-the-Mono-Branch-129b1dba7a80427683c66ce1f670a218 -->
-        <!-- <Reference Include="$(SolutionDir)Assembly-CSharp-MONO.dll"/>--> 
+        <Reference Include="$(SolutionDir)Assembly-CSharp-MONO.dll" Condition="'$(Configuration)' != 'Release'"/>
         <!-- You can also use this from BepInEx, but this is missing the source code: -->
-        <Reference Include="$(BepInExFolder)interop\Assembly-CSharp.dll"/>
-        <Reference Include="$(BepInExFolder)interop\Il2Cppmscorlib.dll"/>
-        <Reference Include="$(BepInExFolder)interop\Unity.TextMeshPro.dll"/>
-        <Reference Include="$(BepInExFolder)interop\UnityEngine.CoreModule.dll"/>
-        <Reference Include="$(BepInExFolder)plugins\Venomaus-SODCommon\SOD.Common.dll"/>
-    </ItemGroup>
-
-    <Target Name="CopyToModFolder" AfterTargets="AfterBuild">
-        <Copy SourceFiles="$(OutDir)$(AssemblyName).dll" DestinationFolder="$(BepInExFolder)plugins\slothsoft\"/>
-    </Target>
-
-    <Target Name="RemoveFromModFolder" AfterTargets="Clean">
-        <Delete Files="$(BepInExFolder)plugins\slothsoft\$(AssemblyName).dll"/>
-    </Target>
-</Project>
+         <Reference Include="$(BepInExFolder)interop\Assembly-CSharp.dll" Condition="'$(Configuration)' == 'Release'"/>
+         <Reference Include="$(BepInExFolder)interop\Il2Cppmscorlib.dll"/>
+         <Reference Include="$(BepInExFolder)interop\Unity.TextMeshPro.dll"/>
+         <Reference Include="$(BepInExFolder)interop\UnityEngine.CoreModule.dll"/>
+         <Reference Include="$(BepInExFolder)plugins\Venomaus-SODCommon\SOD.Common.dll"/>
+     </ItemGroup>
+ 
+    <!-- How a mod is setup can be found here: https://shadowsofdoubt.notion.site/Configuring-Uploading-a-Mod-2a114499770a8026bfc5d33dbaf09c3d -->
+     <Target Name="CopyToModFolder" AfterTargets="Publish">
+         <!-- Copy the finished file -->
+         <Copy SourceFiles="$(OutDir)$(AssemblyName).dll" DestinationFolder="$(ThisModsFolder)\"/>
+         <!-- Copy additional information (for BepInEx, manifest.json would be the correct name) -->
+         <Copy SourceFiles="$(MSBuildThisFileDirectory)/docs/manifest.json" DestinationFiles="$(ThisModsFolder)\manifest.json"/> <!-- ModSettings.txt -->
+         <Copy SourceFiles="$(MSBuildThisFileDirectory)/docs/changelog.txt" DestinationFiles="$(ThisModsFolder)\ChangeLog.txt"/>
+         <Copy SourceFiles="$(MSBuildThisFileDirectory)/docs/logo.png" DestinationFiles="$(ThisModsFolder)\Preview.png"/>
+     </Target>
+ 
+     <Target Name="RemoveFromModFolder" AfterTargets="Clean">
+         <RemoveDir Directories="$(ThisModsFolder)"/>
+     </Target>
+ </Project>

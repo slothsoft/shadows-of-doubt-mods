@@ -1,0 +1,5 @@
+﻿Lets NPCs move on with their lives:
+
+[ul]
+[li]after a while, NPCs will move into an empty address[/li]
+[/ul]

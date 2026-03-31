@@ -1,0 +1,10 @@
+{
+  "name": "de.slothsoft.shadowsofdoubt.LiveYourLife",
+  "version_number": "0.0.9",
+  "website_url": "https://github.com/slothsoft/shadows-of-doubt-mods",
+  "description": "Lets NPCs move on with their lives:[ul][li]after a while, NPCs will move into an empty address[/li][/ul]",
+  "author": "Slothsoft",
+  "dependencies": [
+    "Venomaus-SODCommon-2.1.3"
+  ]
+}

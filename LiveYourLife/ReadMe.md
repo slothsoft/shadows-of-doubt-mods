@@ -6,6 +6,15 @@ Lets NPCs move on with their lives:
 
 - after a while, NPCs will move into an empty address
 
+
+### Versions
+
+| Version |Changes         |
+|---------|-----------------|
+| 0.9.0   | first test mod  |
+
+_(All issues can be found [here](https://github.com/slothsoft/shadows-of-doubt-mods/issues).)_
+
 ## To-Do
 
 - [x] spawn decor for new address
