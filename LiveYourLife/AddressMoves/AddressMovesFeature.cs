@@ -14,6 +14,7 @@ public static class AddressMovesFeature
         Lib.Time.OnTimeInitialized += (_, e)
             // saved LiveYourLifeConfig data is loaded OnBeforeLoad, so if addresses have no timestamp here, the plug-in is new
             => {
+            MovingNotice.RegisterDocument();
             var saveData = AddressMovesSaveData.Instance;
             LiveYourLifePlugin.Logger.LogInfo($"{saveData.AddressSales.Count} addresses loaded");
             new AddressSync(true)

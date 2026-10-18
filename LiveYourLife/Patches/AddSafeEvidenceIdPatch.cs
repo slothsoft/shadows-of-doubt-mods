@@ -47,8 +47,5 @@ internal static class LockEvidencePatch
 
         newID = FormattableString.Invariant(
             $"LiveYourLife.Lock.{furniture.id}.{interactable.preset.name}.{interactable.pt}.{position.x:R}.{position.y:R}.{position.z:R}");
-
-        LiveYourLifePlugin.Logger.LogInfo(
-            $"Keypad evidence ID replaced: {newID}");
     }
 }

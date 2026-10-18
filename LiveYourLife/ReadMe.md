@@ -5,6 +5,9 @@ _(Back to [overview](../README.md))_
 Lets NPCs move on with their lives:
 
 - after a while, NPCs will move into an empty address
+  - [Config](./AddressMoves/AddressMovesConfig.cs)
+  - the old address will clear out
+  - the new address will be fully furnished (including passcode or job notes)
 
 
 ### Versions
@@ -20,9 +23,8 @@ _(All issues can be found [here](https://github.com/slothsoft/shadows-of-doubt-m
 - [x] spawn decor for new address
 - [ ] add correct "for sale" for old address
 - [x] only move after a while
-- [ ] the "initial" date is wrong (current instead of game start)
+- [x] the "initial" date is wrong (current instead of game start)
 - [ ] we should have some way to get to moving data
-- [ ] block persons from moving a lot
 
 ## Extended Development
  

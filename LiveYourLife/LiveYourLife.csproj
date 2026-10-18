@@ -36,9 +36,9 @@
    
     <ItemGroup>
         <!-- Assembly DLL with the source code; how to get it: https://shadowsofdoubt.notion.site/Accessing-the-Mono-Branch-129b1dba7a80427683c66ce1f670a218 -->
-        <Reference Include="$(SteamFolder)Shadows of Doubt_Data\Managed\Assembly-CSharp.dll" Condition="'$(Configuration)' != 'Release'"/>
+        <!-- <Reference Include="$(SteamFolder)Shadows of Doubt_Data\Managed\Assembly-CSharp.dll" Condition="'$(Configuration)' != 'Release'"/> -->
         <!-- You can also use this from BepInEx, but this is missing the source code: -->
-         <Reference Include="$(BepInExFolder)interop\Assembly-CSharp.dll" Condition="'$(Configuration)' == 'Release'"/>
+         <Reference Include="$(BepInExFolder)interop\Assembly-CSharp.dll"/>
          <Reference Include="$(BepInExFolder)interop\Il2Cppmscorlib.dll"/>
          <Reference Include="$(BepInExFolder)interop\Il2CppSystem.Core.dll"/>
          <Reference Include="$(BepInExFolder)interop\Unity.TextMeshPro.dll"/>
