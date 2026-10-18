@@ -21,7 +21,7 @@ public class LiveYourLifePlugin : BasePlugin
     {
         Logger = Log;
         Logger.LogInfo($"{Name} Plugin loaded. (ID={Id} Version={Version})");
-        Harmony.CreateAndPatchAll(typeof(LiveYourLifePlugin));
+        Harmony.CreateAndPatchAll(typeof(LiveYourLifePlugin).Assembly);
 
         SaveDataManager = new SaveDataManager<LiveYourLifeSaveData>(Name);
         

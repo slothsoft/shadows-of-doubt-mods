@@ -48,7 +48,7 @@ public class MovingCompany(AddressMovesConfig config, AddressMovesSaveData saveD
             .ToArray();
 
         Log($"        family incomes on same floor: {familyIncomesOnSameFloor.Length}");
-        var minFamilyIncome = familyIncomesOnSameFloor.Length == 0 ? 0 : familyIncomesOnSameFloor.Min();
+        var minFamilyIncome = familyIncomesOnSameFloor.Length == 0 ? 1 : familyIncomesOnSameFloor.Min();
         var maxFamilyIncome = familyIncomesOnSameFloor.Length == 0 ? float.MaxValue : familyIncomesOnSameFloor.Max();
         Log($"        minFamilyIncome: {minFamilyIncome}");
         Log($"        maxFamilyIncome: {maxFamilyIncome}");
