@@ -14,7 +14,6 @@ public class SaveDataManager<TSaveData>
     private static readonly JsonSerializerOptions JsonOptions = new JsonSerializerOptions
     {
         WriteIndented = false, 
-        Converters = { new TimeDataJsonConverter() },
     };
     
     public string FileName { get; }

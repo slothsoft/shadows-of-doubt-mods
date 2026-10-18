@@ -18,6 +18,6 @@ public static class NewAddressExtensions
 
     public static float CalculateFamilyIncome(this NewAddress address)
     {
-        return address.inhabitants.Select(c => c.job.salary).Sum();
+        return address.inhabitants.Select(c => c.job?.salary ?? 0).Sum();
     }
 }

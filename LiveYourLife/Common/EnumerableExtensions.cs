@@ -29,4 +29,17 @@ public static class EnumerableExtensions
             enumerable.Remove(toRemove);
         }
     }
+    
+    public static IEnumerable<T> Shuffled<T>(this IEnumerable<T> source)
+    {
+        var items = source.ToArray();
+
+        for (var i = items.Length - 1; i > 0; i--)
+        {
+            var j = Random.Next(i + 1);
+            (items[i], items[j]) = (items[j], items[i]);
+        }
+
+        return items;
+    }
 }

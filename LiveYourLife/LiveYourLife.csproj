@@ -40,6 +40,7 @@
         <!-- You can also use this from BepInEx, but this is missing the source code: -->
          <Reference Include="$(BepInExFolder)interop\Assembly-CSharp.dll" Condition="'$(Configuration)' == 'Release'"/>
          <Reference Include="$(BepInExFolder)interop\Il2Cppmscorlib.dll"/>
+         <Reference Include="$(BepInExFolder)interop\Il2CppSystem.Core.dll"/>
          <Reference Include="$(BepInExFolder)interop\Unity.TextMeshPro.dll"/>
          <Reference Include="$(BepInExFolder)interop\UnityEngine.CoreModule.dll"/>
          <Reference Include="$(BepInExFolder)plugins\Venomaus-SODCommon\SOD.Common.dll"/>

@@ -12,7 +12,9 @@ public class MovingCompany(AddressMovesConfig config, AddressMovesSaveData saveD
 
     public void MoveTenantsIfApplicable()
     {
-        foreach (var address in GameplayController.Instance.forSale.ToArray().WhereIsReadyForNewTenants(config, saveData))
+        var readyAddresses = GameplayController.Instance.forSale.ToArray().WhereIsReadyForNewTenants(config, saveData).ToArray();
+        Log($"Searching for addresses ready for NPC moving: {readyAddresses.Length} found");
+        foreach (var address in readyAddresses.Shuffled())
         {
             var newTenants = FindNewTenants(address);
             if (newTenants != null)
@@ -46,8 +48,8 @@ public class MovingCompany(AddressMovesConfig config, AddressMovesSaveData saveD
             .ToArray();
 
         Log($"        family incomes on same floor: {familyIncomesOnSameFloor.Length}");
-        var minFamilyIncome = familyIncomesOnSameFloor.Min();
-        var maxFamilyIncome = familyIncomesOnSameFloor.Max();
+        var minFamilyIncome = familyIncomesOnSameFloor.Length == 0 ? 0 : familyIncomesOnSameFloor.Min();
+        var maxFamilyIncome = familyIncomesOnSameFloor.Length == 0 ? float.MaxValue : familyIncomesOnSameFloor.Max();
         Log($"        minFamilyIncome: {minFamilyIncome}");
         Log($"        maxFamilyIncome: {maxFamilyIncome}");
 
@@ -140,9 +142,81 @@ public class MovingCompany(AddressMovesConfig config, AddressMovesSaveData saveD
             addressRoom.SetVisible(true, true, addressRoom.geometryLoaded);
             addressRoom.LoadRoomStuff(addressRoom.geometryLoaded);
         }
+        foreach (var inhabitant in targetAddress.inhabitants)
+        {
+            PlacePasscodeNote(inhabitant, targetAddress);
+            var added = RestorePersonalJobAffects(inhabitant);
+            Log($"        + {inhabitant.name}: restored {added} personal job items, total {inhabitant.personalAffects.Count}");
+        }
+        
         targetAddress.PlaceObjects(); // this places the deco articles
     }
 
+    // Human.SetJob only prepares these placement lists during city generation.
+    // Rebuild the home portion without changing the citizen's job or AI state.
+    private static int RestorePersonalJobAffects(Human human)
+    {
+        var job = human.job;
+        if (job == null || job.preset == null) {
+            return 0;
+        }
+
+        var preset = job.preset;
+        var controls = InteriorControls.Instance;
+        var added = 0;
+
+        if (preset.businessCards && AddJobAffect(human, controls.businessCard)) added++;
+        if (preset.workRota && AddJobAffect(human, controls.workRota)) added++;
+        if (preset.employmentContract && AddJobAffect(human, controls.employmentContractHome)) added++;
+
+        // Mirror AddPersonalAffect's routing for work items placed at home.
+        if (job.employer == null || (job.employer.address != null && job.employer.address != human.home)) return added;
+        
+        if (preset.namePlacard && AddJobAffect(human, controls.namePlacard)) added++;
+        if (preset.employeePhoto && AddJobAffect(human, controls.employeePhoto)) added++;
+        if (preset.employmentContract && AddJobAffect(human, controls.employmentContractWork)) added++;
+
+        foreach (var item in preset.jobItems){
+            if (AddJobAffect(human, item)) added++;
+        }
+
+        return added;
+    }
+    
+    private static bool AddJobAffect(Human human, InteractablePreset item)
+    {
+        if (item == null || human.personalAffects.Contains(item))
+        {
+            return false;
+        }
+        human.personalAffects.Add(item);
+        return true;
+    }
+    private void PlacePasscodeNote(Human human, NewAddress address)
+    {
+        var note = human.WriteNote(
+            Human.NoteObject.note,
+            treeID: "970c4114-def0-4e04-8982-da36e01f4905",
+            reciever: human,
+            placement: address,
+            security: 1,
+            ownershipPlacement: (InteractablePreset.OwnedPlacementRule)1,
+            priority: 3,
+            dontPlaceInRooms: null,
+            printDebug: false,
+            toneFriendly: 0,
+            toneFormal: 0,
+            loadGUID: null);
+
+        if (note == null)
+        {
+            Log($"Could not place passcode note for {human.name}");
+            return;
+        }
+
+        human.passcode.notes.Add(note.id);
+    }
+    
     private void MoveTenantsOut(NewAddress oldAddress)
     {
         foreach (var addressRoom in oldAddress.rooms)
