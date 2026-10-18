@@ -19,7 +19,8 @@ Mods for the game [Shadows of Doubt](https://store.steampowered.com/agecheck/app
 ## How to Develop for SoD
 
 - **[Official Documentation](https://shadowsofdoubt.notion.site/Shadows-of-Doubt-Mod-Documentation-33744ac558304d89997e88f2051280f7)**
-- **Build** the project to create the mod DLL in mod folder
+- if you start in a new workspace, you need to [switch to the mono branch of Shadows of Doubt](https://shadowsofdoubt.notion.site/Accessing-the-Mono-Branch-129b1dba7a80427683c66ce1f670a218)
+- **Publish** the project to create the mod DLL in mod folder: `dotnet publish .\LiveYourLife\LiveYourLife.csproj -c Release`
 
 
 ### Useful Classes
@@ -56,3 +57,13 @@ foreach (var citizen in CityData.Instance.citizenDirectory.Where(c => c != null 
     }
  }
 ```
+
+# Other Mods
+
+- [PiePieOnline's Mods](https://github.com/piepieonline/ShadowsOfDoubtMods)
+- [Ven0maus's Mods](https://github.com/Ven0maus/SOD.Common/)
+- [ReveredRedHood's Mods](https://github.com/ReveredRedHood/SpyraxiShadowsOfDoubtMods)
+- [TRUEDARTT's Mods](https://github.com/TRUEDARTT/TRUEDARTT-s-Shadows-of-Doubt-MODS)
+- [Wund3rcr4zy's By The Book](https://github.com/wund3rcr4zy/by-the-book)
+  
+

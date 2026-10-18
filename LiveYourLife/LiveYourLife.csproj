@@ -23,6 +23,7 @@
         <!-- Change these variables -->
         <ModFolder>$(APPDATA)\..\LocalLow\ColePowered Games\Shadows of Doubt\Mods</ModFolder>
         <BepInExFolder>$(APPDATA)\r2modmanPlus-local\ShadowsofDoubt\profiles\Default\BepInEx\</BepInExFolder>
+        <SteamFolder>C:\Program Files (x86)\Steam\steamapps\common\Shadows of Doubt\</SteamFolder>
         
         <!-- Calculated from the above-->
         <!--<ThisModsFolder>$(ModFolder)\Slothsoft-$(AssemblyName)</ThisModsFolder>-->
@@ -32,10 +33,10 @@
     <ItemGroup>
         <PackageReference Include="BepInEx.Unity.IL2CPP" Version="6.0.0-be.*" IncludeAssets="compile"/>
     </ItemGroup>
-
+   
     <ItemGroup>
         <!-- Assembly DLL with the source code; how to get it: https://shadowsofdoubt.notion.site/Accessing-the-Mono-Branch-129b1dba7a80427683c66ce1f670a218 -->
-        <Reference Include="$(SolutionDir)Assembly-CSharp-MONO.dll" Condition="'$(Configuration)' != 'Release'"/>
+        <Reference Include="$(SteamFolder)Shadows of Doubt_Data\Managed\Assembly-CSharp.dll" Condition="'$(Configuration)' != 'Release'"/>
         <!-- You can also use this from BepInEx, but this is missing the source code: -->
          <Reference Include="$(BepInExFolder)interop\Assembly-CSharp.dll" Condition="'$(Configuration)' == 'Release'"/>
          <Reference Include="$(BepInExFolder)interop\Il2Cppmscorlib.dll"/>

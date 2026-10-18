@@ -30,20 +30,21 @@ internal static class AddressMovesExtensions
             config.MinTimeUntilMoveInHours;
         var shouldBeOnSaleAfter = onSaleSince.AddHours(shouldBeOnSaleForHours);
         
-        AddressMovesFeature.Logger.LogInfo($"- {newAddress.name} can be moved into after {shouldBeOnSaleAfter.ToString(LiveYourLifePlugin.DateFormat)}: is currently {shouldBeOnSaleAfter < Lib.Time.CurrentDateTime}");
+        AddressMovesFeature.Logger.LogInfo($"- {newAddress.name} can be moved into after {shouldBeOnSaleAfter.ToString(LiveYourLifePlugin.DateFormat)}");
         return shouldBeOnSaleAfter < Lib.Time.CurrentDateTime;
     }
 
     internal static Time.TimeData GetOnSaleSince(this NewAddress newAddress, AddressMovesSaveData saveData)
     {
         var addressSale = saveData.AddressSales.SingleOrDefault(a => a.AddressName == newAddress.name);
-        if (addressSale == null)
+        if (addressSale != null)
         {
-            // this address must be new (?)
-            addressSale = saveData.AddInitialData(newAddress.name);
-            LiveYourLifePlugin.Logger.LogInfo($"{newAddress.name} is empty since {addressSale.Since.ToString(LiveYourLifePlugin.DateFormat)}");
+            return addressSale.Since;
         }
 
+        // this address must be new
+        addressSale = saveData.AddInitialData(newAddress.name);
+        LiveYourLifePlugin.Logger.LogInfo($"{newAddress.name} is empty since {addressSale.Since.ToString(LiveYourLifePlugin.DateFormat)}");
         return addressSale.Since;
     }
     

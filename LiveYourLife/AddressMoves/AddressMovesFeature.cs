@@ -10,7 +10,7 @@ public static class AddressMovesFeature
 
     public static void Load()
     {
-        Lib.SaveGame.OnAfterLoad += (_, e)
+        Lib.Time.OnTimeInitialized += (_, e)
             // saved LiveYourLifeConfig data is loaded OnBeforeLoad, so if addresses have no timestamp here, the plug-in is new
             => {
             var saveData = AddressMovesSaveData.Instance;
