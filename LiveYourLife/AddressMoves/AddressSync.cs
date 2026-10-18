@@ -34,7 +34,7 @@ internal class AddressSync(bool initital)
         {
             if (savedAddresses.ContainsKey(name)) continue;
             var addressSale = name.CreateInitialData(initital);
-            Log($"{name} is empty since {addressSale.Since.ToString(LiveYourLifePlugin.DateFormat)}");
+            Log($"{name} is empty since {addressSale.Since.AsGameTimeString()}");
             yield return addressSale;
         }
     }

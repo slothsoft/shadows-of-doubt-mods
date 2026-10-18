@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Time = SOD.Common.Helpers.Time;
 
 namespace LiveYourLife.AddressMoves;
 
@@ -12,7 +11,7 @@ public record AddressMovesSaveData
     }
     
     public IList<AddressSaleSaveData> AddressSales { get; set; } = [];
-    public Time.TimeData? LastMove { get; set; }
+    public float? LastMove { get; set; }
 }
 
-public record AddressSaleSaveData(string AddressName, Time.TimeData Since);
+public record AddressSaleSaveData(string AddressName, float Since);

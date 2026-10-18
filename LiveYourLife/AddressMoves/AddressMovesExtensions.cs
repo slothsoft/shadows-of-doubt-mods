@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using SOD.Common;
+using LiveYourLife.Common;
 using SOD.Common.Extensions;
-using SOD.Common.Helpers;
 
 namespace LiveYourLife.AddressMoves;
 
@@ -11,10 +10,10 @@ internal static class AddressMovesExtensions
     public static IEnumerable<NewAddress> WhereIsReadyForNewTenants(this IEnumerable<NewAddress> addresses, AddressMovesConfig config, AddressMovesSaveData saveData)
     {
         if (saveData.LastMove != null &&
-            saveData.LastMove.Value.AddHours(config.TimeBetweenMovesInHours) > Lib.Time.CurrentDateTime)
+            saveData.LastMove.Value + config.TimeBetweenMovesInHours > SessionData.Instance.gameTime)
         {
             // this is the easiest case: the last move was too recent
-            AddressMovesFeature.Logger.LogInfo($"-> the last move was too recent (wait until {saveData.LastMove.Value.AddHours(config.TimeBetweenMovesInHours).ToString(LiveYourLifePlugin.DateFormat)})");
+            AddressMovesFeature.Logger.LogInfo($"-> the last move was too recent (wait until {(saveData.LastMove.Value + config.TimeBetweenMovesInHours).AsGameTimeString()})");
             addresses.ForEach(a => a.GetOnSaleSince(saveData));
             return []; 
         }
@@ -28,13 +27,13 @@ internal static class AddressMovesExtensions
         var shouldBeOnSaleForHours =
             newAddress.id % (config.MaxTimeUntilMoveInHours - config.MinTimeUntilMoveInHours + 1) +
             config.MinTimeUntilMoveInHours;
-        var shouldBeOnSaleAfter = onSaleSince.AddHours(shouldBeOnSaleForHours);
+        var shouldBeOnSaleAfter = onSaleSince + shouldBeOnSaleForHours;
         
-        AddressMovesFeature.Logger.LogInfo($"- {newAddress.name} can be moved into after {shouldBeOnSaleAfter.ToString(LiveYourLifePlugin.DateFormat)}");
-        return shouldBeOnSaleAfter < Lib.Time.CurrentDateTime;
+        AddressMovesFeature.Logger.LogInfo($"- {newAddress.name} can be moved into after {shouldBeOnSaleAfter.AsGameTimeString()}");
+        return shouldBeOnSaleAfter <= SessionData.Instance.gameTime;
     }
 
-    internal static Time.TimeData GetOnSaleSince(this NewAddress newAddress, AddressMovesSaveData saveData)
+    internal static float GetOnSaleSince(this NewAddress newAddress, AddressMovesSaveData saveData)
     {
         var addressSale = saveData.AddressSales.SingleOrDefault(a => a.AddressName == newAddress.name);
         if (addressSale != null)
@@ -44,7 +43,7 @@ internal static class AddressMovesExtensions
 
         // this address must be new
         addressSale = saveData.AddInitialData(newAddress.name);
-        LiveYourLifePlugin.Logger.LogInfo($"{newAddress.name} is empty since {addressSale.Since.ToString(LiveYourLifePlugin.DateFormat)}");
+        LiveYourLifePlugin.Logger.LogInfo($"{newAddress.name} is empty since {addressSale.Since.AsGameTimeString()}");
         return addressSale.Since;
     }
     
@@ -57,8 +56,9 @@ internal static class AddressMovesExtensions
     
     internal static AddressSaleSaveData CreateInitialData(this string addressName, bool initial = false)
     {
+        
         // if its initial, then this plugin is new and the address is empty since the start of the game (Feb 1st 1979)
-        var addressOnSaleSince = initial ? new Time.TimeData(1979, 2, 0, 0, 0) : Lib.Time.CurrentDateTime;
+        var addressOnSaleSince = initial ? 0f : SessionData.Instance.gameTime;
         return new AddressSaleSaveData(addressName, addressOnSaleSince);
     }
 }

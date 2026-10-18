@@ -1,4 +1,5 @@
 ﻿using BepInEx.Logging;
+using LiveYourLife.Common;
 using SOD.Common;
 using SOD.Common.Helpers;
 
@@ -25,7 +26,7 @@ public static class AddressMovesFeature
 
     private static void MoveTenantsIfApplicable(object? sender, TimeChangedArgs e)
     {
-        Logger.LogInfo($"{LiveYourLifePlugin.Name} tick on {Lib.Time.CurrentDateTime.ToString(LiveYourLifePlugin.DateFormat)}");
+        Logger.LogInfo($"{LiveYourLifePlugin.Name} tick on {SessionData.Instance.gameTime.AsGameTimeString()}");
         var movers = new MovingCompany(LiveYourLifeConfig.Instance.AddressMoves, AddressMovesSaveData.Instance)
         {
             Log = Logger.LogInfo

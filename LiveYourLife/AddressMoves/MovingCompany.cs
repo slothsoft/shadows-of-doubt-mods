@@ -161,6 +161,6 @@ public class MovingCompany(AddressMovesConfig config, AddressMovesSaveData saveD
         targetAddress.saleNote = null;
         
         newTenants.saleNote?.forSale = newTenants;
-        saveData.LastMove = Lib.Time.CurrentDateTime;
+        saveData.LastMove = SessionData.Instance.gameTime;
     }
 }
