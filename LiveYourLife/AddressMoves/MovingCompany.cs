@@ -72,15 +72,12 @@ public class MovingCompany(AddressMovesConfig config, AddressMovesSaveData saveD
         // LogNewAddressComparison(newTenants, targetAddress);
 
         Log($"    family moves from: {newTenants.name}");
-        var movers = newTenants.inhabitants.ToArray();
-        var movingNoticeText = MovingNotice.CaptureText(newTenants, targetAddress, movers);
+        if (newTenants.inhabitants.Count > 0) MovingNotice.Place(newTenants, targetAddress, newTenants.inhabitants.ToArray());
+        
         MoveHumans(newTenants, targetAddress);
         MoveTenantsInto(newTenants, targetAddress);
         MoveTenantsOut(newTenants);
         CloseSale(newTenants, targetAddress);
-
-        if (movers.Length > 0)
-            MovingNotice.Place(newTenants, movers[0], movingNoticeText, Log);
 
         // LogNewAddressComparison(newTenants, targetAddress);
     }

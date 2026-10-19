@@ -1,5 +1,6 @@
 ﻿using BepInEx.Logging;
 using LiveYourLife.Common;
+using LiveYourLife.CustomDocuments;
 using SOD.Common;
 using SOD.Common.Helpers;
 
@@ -14,7 +15,7 @@ public static class AddressMovesFeature
         Lib.Time.OnTimeInitialized += (_, e)
             // saved LiveYourLifeConfig data is loaded OnBeforeLoad, so if addresses have no timestamp here, the plug-in is new
             => {
-            MovingNotice.RegisterDocument();
+            BaseCustomDocument.RegisterTypes();
             var saveData = AddressMovesSaveData.Instance;
             LiveYourLifePlugin.Logger.LogInfo($"{saveData.AddressSales.Count} addresses loaded");
             new AddressSync(true)

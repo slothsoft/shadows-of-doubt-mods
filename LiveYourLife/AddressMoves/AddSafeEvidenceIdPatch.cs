@@ -1,7 +1,7 @@
 ﻿using System;
 using HarmonyLib;
 
-namespace LiveYourLife.Patches;
+namespace LiveYourLife.AddressMoves;
 
 /*
  * Safe keypads created during gameplay can display unrelated evidence, such as "Entry wound", instead of the keypad
